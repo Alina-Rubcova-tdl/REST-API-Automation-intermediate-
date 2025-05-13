@@ -1,17 +1,15 @@
 export const config = {
     STG: {
-        host: 'https://gorest.co.in/public/v2',
-        token: 'bed2efa5ebf33a4053e3dab493ddb0313e202038ce996fc3d59f8f2cccfb584a',
-        username: 'Tenali Ramakrishna',
-        gender: 'male',
-        status: 'active'
+        host: 'https://food-api.tdlbox.com',
+        xApiKey: '759f583a-0cc8-4095-a0e5-7e579bb8041c',
+        name: 'Janis',
+        surname: 'Berzins'
     },
     PROD: {
-        host: 'https://gorest.co.in/public/v2',
-        token: 'bed2efa5ebf33a4053e3dab493ddb0313e202038ce996fc3d59f8f2cccfb584a',
-        username: 'Tenali Ramakrishna',
-        gender: 'male',
-        status: 'active'
+        host: 'https://food-api.tdlbox.com',
+        xApiKey: '759f583a-0cc8-4095-a0e5-7e579bb8041c',
+        name: 'Janis',
+        surname: 'Berzins'
     }
 }
 

@@ -10,7 +10,8 @@ export async function request(context, method, path, body = undefined, auth = tr
     const headers = customHeaders ? customHeaders : {
         'Content-Type': 'application/json',
         'Accept': 'application/json',
-        ...(auth && {'Authorization': `Bearer ${config[global.env].token}`})
+        'x-api-key': `${config[global.env].xApiKey}`,
+        ...(auth && {'Authorization': `Bearer ${global.executionVariables['accessToken']}`})
     }
 
     let response = null
@@ -52,6 +53,10 @@ export async function request(context, method, path, body = undefined, auth = tr
 
             if (asserts.executionVariables) {
                 await setExecutionVariables(responseBody, asserts.executionVariables)
+            }
+
+            if (asserts.expectedTypes){
+                await validateExpectedTypes(responseBody, asserts.expectedTypes, context, method, path, headers, response, body)
             }
      
             break
@@ -115,7 +120,7 @@ export async function request(context, method, path, body = undefined, auth = tr
         default:
             console.log('not valid request method provided')
     }
-
+    
     return response
 }
 
@@ -147,6 +152,36 @@ async function validateExpectedValues(body, fields, context, method, path, heade
             addRequestInfoToReport(context, method, path, headers, response, requestBody)
             const actual = getNestedValue(field.path, body)
             assert.fail(actual, field.value, `${field.path} expected value is ${field.value}, but actual was ${actual}`)
+        }
+    })
+}
+
+async function validateExpectedTypes(body, fields, context, method, path, headers, response, requestBody) {
+    fields.forEach(field => {
+        try {
+            switch(field.type.toLowerCase()) {
+                case 'number':
+                    expect(getNestedValue(field.path, body)).to.be.a('number')
+                    break
+                case 'string':
+                    expect(getNestedValue(field.path, body)).to.be.a('string')
+                    break
+                case 'boolean':
+                    expect(getNestedValue(field.path, body)).to.be.a('boolean')
+                    break
+                case 'object':
+                    expect(getNestedValue(field.path, body)).to.be.a('object')
+                    break
+                case 'array':
+                    expect(getNestedValue(field.path, body)).to.be.an('array')
+                    break
+                default:
+                    console.log(`not supported type provided - ${field.type}`)
+            }
+        } catch (error) {
+            addRequestInfoToReport(context, method, path, headers, response, requestBody)
+            const actual = getNestedValue(field.path, body)
+            assert.fail(actual, field.type, `Expected type was "${field.type}", but received "${typeof actual}"`)
         }
     })
 }
