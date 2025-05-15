@@ -129,7 +129,12 @@ async function performValidation(responseBody, asserts, context, method, path, h
     if (asserts.expectedValuesInArrayOfObjects){
         await validateExpectedValuesInArrayOfObjects(
             responseBody, 
-            asserts.expectedValuesInArrayOfObjects, context, method, path, headers, response, 
+            asserts.expectedValuesInArrayOfObjects.fields, 
+            context, 
+            method, 
+            path, 
+            headers, 
+            response, 
             asserts.expectedValuesInArrayOfObjects.key, 
             asserts.expectedValuesInArrayOfObjects.value, 
             body
@@ -164,14 +169,16 @@ async function validateExpectedValuesInArrayOfObjects(body, fields, context, met
     if(!objectToValidate){
         assert.fail(key, value, `object with key ${key} and value ${value} not found`)
     }
-    // fields.every(field => {
-    //     try {
-    //         expect(getNestedValue(field, body), `${field} present in body`).not.to.be.undefined
-    //     } catch (error) {
-    //         addRequestInfoToReport(context, method, path, headers, response, requestBody)
-    //         assert.fail(error.actual, error.expected, `${field} field is not present in body`)
-    //     }
-    // })
+
+    fields.forEach(field => {
+        try {
+            expect(getNestedValue(field.path, objectToValidate), `${field.path} not equal to ${field.value}`).to.be.equal(field.value)
+        } catch (error) {
+            addRequestInfoToReport(context, method, path, headers, response, requestBody)
+            const actual = getNestedValue(field.path, objectToValidate)
+            assert.fail(actual, field.value, `${field.path} expected value is ${field.value}, but actual was ${actual}`)
+        }
+    })
 }
 
 async function validateExpectedValues(body, fields, context, method, path, headers, response, requestBody) {

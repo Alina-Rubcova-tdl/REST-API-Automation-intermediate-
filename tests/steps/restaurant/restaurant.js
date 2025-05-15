@@ -51,7 +51,7 @@ export async function getAllRestaurants() {
                 expectedValuesInArrayOfObjects: {
                     key: '_id',
                     value: global.executionVariables['restaurantId'],
-                    fiels: [
+                    fields: [
                         {path: 'name', value: executionVariables['restaurantName']}
                     ]
                 }
