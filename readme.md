@@ -28,4 +28,9 @@ $env - environment
  - STG
  - PROD
 
+
+## Url documentation for Api commands
+
+https://food-api.tdlbox.com/swagger/#/Restaurants/post_restaurants
+
 #### Execution report can be find at /mochawesome-report/mochawesome.html

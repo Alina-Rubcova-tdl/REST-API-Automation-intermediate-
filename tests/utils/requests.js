@@ -22,99 +22,80 @@ export async function request(context, method, path, body = undefined, auth = tr
             response = await requestST.get(path).set(headers)
             responseBody = response.body
 
-            await validateStatusCode(response.statusCode, asserts.statusCode, context, method, path, headers, response)
-
-            if (asserts.expectedFields) {
-                await validateFieldsExists(responseBody, asserts.expectedFields, context, method, path, headers, response)
-            }
-
-            if (asserts.expectedValues) {
-                await validateExpectedValues(responseBody, asserts.expectedValues, context, method, path, headers, response)
-            }
-
-            if (asserts.executionVariables) {
-                await setExecutionVariables(responseBody, asserts.executionVariables)
-            }
+            await performValidation(
+                responseBody, 
+                asserts, 
+                context, 
+                method, 
+                path, 
+                headers, 
+                response, 
+                body
+            )
 
             break
         case 'POST':
             response = await requestST.post(path).send(body).set(headers)
             responseBody = response.body
 
-            await validateStatusCode(response.statusCode, asserts.statusCode, context, method, path, headers, response, body)
-
-            if (asserts.expectedFields) {
-                await validateFieldsExists(responseBody, asserts.expectedFields, context, method, path, headers, response, body)
-            }
-
-            if (asserts.expectedValues) {
-                await validateExpectedValues(responseBody, asserts.expectedValues, context, method, path, headers, response, body)
-            }
-
-            if (asserts.executionVariables) {
-                await setExecutionVariables(responseBody, asserts.executionVariables)
-            }
-
-            if (asserts.expectedTypes){
-                await validateExpectedTypes(responseBody, asserts.expectedTypes, context, method, path, headers, response, body)
-            }
+            await performValidation(
+                responseBody, 
+                asserts, 
+                context, 
+                method, 
+                path, 
+                headers, 
+                response, 
+                body
+            )
      
             break
         case 'PATCH':
             response = await requestST.patch(path).send(body).set(headers)
             responseBody = response.body
 
-            await validateStatusCode(response.statusCode, asserts.statusCode, context, method, path, headers, response, body)
-
-            if (asserts.expectedFields) {
-                await validateFieldsExists(responseBody, asserts.expectedFields, context, method, path, headers, response, body)
-            }
-
-            if (asserts.expectedValues) {
-                await validateExpectedValues(responseBody, asserts.expectedValues, context, method, path, headers, response, body)
-            }
-
-            if (asserts.executionVariables) {
-                await setExecutionVariables(responseBody, asserts.executionVariables)
-            }
+            await performValidation(
+                responseBody, 
+                asserts, 
+                context, 
+                method, 
+                path, 
+                headers, 
+                response, 
+                body
+            )
 
             break
         case 'DELETE':
             response = await requestST.delete(path).send(body).set(headers)
             responseBody = response.body
 
-            await validateStatusCode(response.statusCode, asserts.statusCode, context, method, path, headers, response, body)
-
-            if (asserts.expectedFields) {
-                await validateFieldsExists(responseBody, asserts.expectedFields, context, method, path, headers, response, body)
-            }
-
-            if (asserts.expectedValues) {
-                await validateExpectedValues(responseBody, asserts.expectedValues, context, method, path, headers, response, body)
-            }
-
-            if (asserts.executionVariables) {
-                await setExecutionVariables(responseBody, asserts.executionVariables)
-            }
+            await performValidation(
+                responseBody, 
+                asserts, 
+                context, 
+                method, 
+                path, 
+                headers, 
+                response, 
+                body
+            )
 
             break
         case 'PUT':
             response = await requestST.put(path).send(body).set(headers)
             responseBody = response.body
 
-            await validateStatusCode(response.statusCode, asserts.statusCode, context, method, path, headers, response, body)
-
-            if (asserts.expectedFields) {
-                await validateFieldsExists(responseBody, asserts.expectedFields, context, method, path, headers, response, body)
-            }
-
-            if (asserts.expectedValues) {
-                await validateExpectedValues(responseBody, asserts.expectedValues, context, method, path, headers, response, body)
-            }
-
-            if (asserts.executionVariables) {
-                await setExecutionVariables(responseBody, asserts.executionVariables)
-            }
+            await performValidation(
+                responseBody, 
+                asserts, 
+                context, 
+                method, 
+                path, 
+                headers, 
+                response, 
+                body
+            )
 
             break
         default:
@@ -122,6 +103,26 @@ export async function request(context, method, path, body = undefined, auth = tr
     }
     
     return response
+}
+
+async function performValidation(responseBody, asserts, context, method, path, headers, response, body) {
+    await validateStatusCode(response.statusCode, asserts.statusCode, context, method, path, headers, response, body)
+
+    if (asserts.expectedFields) {
+        await validateFieldsExists(responseBody, asserts.expectedFields, context, method, path, headers, response, body)
+    }
+
+    if (asserts.expectedValues) {
+        await validateExpectedValues(responseBody, asserts.expectedValues, context, method, path, headers, response, body)
+    }
+
+    if (asserts.executionVariables) {
+        await setExecutionVariables(responseBody, asserts.executionVariables)
+    }
+
+    if (asserts.expectedTypes){
+        await validateExpectedTypes(responseBody, asserts.expectedTypes, context, method, path, headers, response, body)
+    }
 }
 
 async function validateStatusCode(actual, expected, context, method, path, headers, response, requestBody) {
