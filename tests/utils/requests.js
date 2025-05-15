@@ -125,6 +125,16 @@ async function performValidation(responseBody, asserts, context, method, path, h
     if (asserts.expectedTypes){
         await validateExpectedTypes(responseBody, asserts.expectedTypes, context, method, path, headers, response, body)
     }
+
+    if (asserts.expectedValuesInArrayOfObjects){
+        await validateExpectedValuesInArrayOfObjects(
+            responseBody, 
+            asserts.expectedValuesInArrayOfObjects, context, method, path, headers, response, 
+            asserts.expectedValuesInArrayOfObjects.key, 
+            asserts.expectedValuesInArrayOfObjects.value, 
+            body
+        )
+    }
 }
 
 async function validateStatusCode(actual, expected, context, method, path, headers, response, requestBody) {
@@ -145,6 +155,23 @@ async function validateFieldsExists(body, fields, context, method, path, headers
             assert.fail(error.actual, error.expected, `${field} field is not present in body`)
         }
     })
+}
+
+async function validateExpectedValuesInArrayOfObjects(body, fields, context, method, path, 
+    headers, response, key, value, requestBody) {
+    const objectToValidate = body.find(item => item[key] === value)
+    
+    if(!objectToValidate){
+        assert.fail(key, value, `object with key ${key} and value ${value} not found`)
+    }
+    // fields.every(field => {
+    //     try {
+    //         expect(getNestedValue(field, body), `${field} present in body`).not.to.be.undefined
+    //     } catch (error) {
+    //         addRequestInfoToReport(context, method, path, headers, response, requestBody)
+    //         assert.fail(error.actual, error.expected, `${field} field is not present in body`)
+    //     }
+    // })
 }
 
 async function validateExpectedValues(body, fields, context, method, path, headers, response, requestBody) {

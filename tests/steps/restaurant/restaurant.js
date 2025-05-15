@@ -43,6 +43,23 @@ export async function getRestaurant() {
     })
 }
 
+export async function getAllRestaurants() {
+    it('Get all restaurant', async function () {
+        await request(this, 'GET', `/restaurants`, undefined, true, 
+            {
+                statusCode : 200,
+                expectedValuesInArrayOfObjects: {
+                    key: '_id',
+                    value: global.executionVariables['restaurantId'],
+                    fiels: [
+                        {path: 'name', value: executionVariables['restaurantName']}
+                    ]
+                }
+            }
+        )
+    })
+}
+
 export async function deleteRestaurant() {
     it('Delete restaurant', async function () {
         await request(this, 'DELETE', `/restaurants/${global.executionVariables['restaurantId']}`, undefined, true, 

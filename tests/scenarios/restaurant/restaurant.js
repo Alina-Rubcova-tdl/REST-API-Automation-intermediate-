@@ -1,5 +1,6 @@
 import { createUser, deleteUserNotWrappedWithIt, loginUser} from '../../steps/user/user.js'
-import { createRestaurant, deleteRestaurant, getRestaurant, updateRestaurant, getRemovedRestaurant, deleteAlreadyDeletedRestaurant } from '../../steps/restaurant/restaurant.js'
+import { createRestaurant, deleteRestaurant, getRestaurant, updateRestaurant, 
+    getRemovedRestaurant, deleteAlreadyDeletedRestaurant, getAllRestaurants} from '../../steps/restaurant/restaurant.js'
 import { generateTestData } from '../../utils/helpers.js'
 
 before(async () => {
@@ -15,9 +16,11 @@ after(async () => {
 it('Restaurant Test set', () => {
     describe(`CRUD Restaurant`, () => {
         createRestaurant()
+        createRestaurant()
         getRestaurant()
         updateRestaurant()
         getRestaurant()
+        getAllRestaurants()
         deleteRestaurant()
         getRemovedRestaurant() 
     })
