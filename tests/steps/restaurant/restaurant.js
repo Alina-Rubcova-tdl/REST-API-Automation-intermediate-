@@ -69,22 +69,6 @@ export async function deleteAlreadyDeletedRestaurant() {
     })
 }
 
-// export async function negativeCreateRestaurant(requestBody, testCaseName, messageValue) {
-//     it(testCaseName, async function () {
-//         await request(this, 'POST', '/restaurants', requestBody, true, 
-//             {
-//                 statusCode : 400,
-//                 expectedValues: [
-//                     { path: 'message', value: messageValue }
-//                 ],
-//                 expectedTypes: [
-//                     { path: 'message', type: 'string' }
-//                 ]
-//             }
-//         )
-//     })
-// }
-
 export async function updateRestaurant() {
     it('Update restaurant', async function () {
         const requestBody = await getCreateOrUpdateRestaurantRequestBody()

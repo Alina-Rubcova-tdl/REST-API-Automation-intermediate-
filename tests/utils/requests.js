@@ -102,6 +102,8 @@ export async function request(context, method, path, body = undefined, auth = tr
             console.log('not valid request method provided')
     }
     
+    addRequestInfoToReport(context, method, path, headers, response, body)
+    
     return response
 }
 
@@ -194,23 +196,25 @@ async function setExecutionVariables(body, variables) {
 }
 
 function addRequestInfoToReport(context, method, path, headers, response, body) {
-    addContext(context, `${method} ${path}`)
-    addContext(context, {
-        title: 'REQUEST HEADERS',
-        value: headers
-    })
-    if (body) {
+    if(context){
+        addContext(context, `${method} ${path}`)
         addContext(context, {
-            title: 'REQUEST BODY',
-            value: body
+            title: 'REQUEST HEADERS',
+            value: headers
+        })
+        if (body) {
+            addContext(context, {
+                title: 'REQUEST BODY',
+                value: body
+            })
+        }
+        addContext(context, {
+            title: 'RESPONSE HEADERS',
+            value: response.headers
+        })
+        addContext(context, {
+            title: 'RESPONSE BODY',
+            value: response.body
         })
     }
-    addContext(context, {
-        title: 'RESPONSE HEADERS',
-        value: response.headers
-    })
-    addContext(context, {
-        title: 'RESPONSE BODY',
-        value: response.body
-    })
 }
