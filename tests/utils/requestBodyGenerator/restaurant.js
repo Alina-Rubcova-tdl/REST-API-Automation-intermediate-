@@ -1,10 +1,10 @@
-import { generateRandomString } from '../helpers.js'
+import { faker } from '@faker-js/faker'
 
 
 export async function getCreateOrUpdateRestaurantRequestBody() {
     const requestBody = {
-        "name": await generateRandomString(10),
-         "description": await generateRandomString(16)
+        "name": faker.food.dish(),
+         "description": faker.food.description()
     }
     
     return requestBody
