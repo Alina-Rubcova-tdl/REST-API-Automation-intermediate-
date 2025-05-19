@@ -3,6 +3,7 @@ import supertest from 'supertest'
 import { config } from '../../config.js'
 import { expect, assert } from 'chai'
 import getNestedValue from 'get-nested-value'
+import Ajv from 'ajv'
 
 export async function request(context, method, path, body = undefined, auth = true, asserts = {statusCode : 200},  host = undefined, customHeaders = undefined) {
     const requestST = host ? supertest(host) : supertest(config[global.env].host)
@@ -107,6 +108,19 @@ export async function request(context, method, path, body = undefined, auth = tr
     return response
 }
 
+async function validateSchema(body, schema) {
+    const ajv = new Ajv()
+
+    const validate = ajv.compile(schema)
+    const isValid = validate(body)
+
+    if (!isValid){
+        assert.fail(validate.errors[0].message, validate.errors[0].instancePath, `Schema validation failed with ${validate.errors[0].message} message`)
+    } else {
+        console.log('schema is valid')
+    }
+}
+
 async function performValidation(responseBody, asserts, context, method, path, headers, response, body) {
     await validateStatusCode(response.statusCode, asserts.statusCode, context, method, path, headers, response, body)
 
@@ -124,6 +138,10 @@ async function performValidation(responseBody, asserts, context, method, path, h
 
     if (asserts.expectedTypes){
         await validateExpectedTypes(responseBody, asserts.expectedTypes, context, method, path, headers, response, body)
+    }
+
+    if (asserts.schema){
+        await validateSchema(responseBody, asserts.schema)
     }
 
     if (asserts.expectedValuesInArrayOfObjects){

@@ -1,13 +1,13 @@
 import { request } from '../../utils/requests.js'
 import { getCreateOrUpdateRestaurantRequestBody } from '../../utils/requestBodyGenerator/restaurant.js'
+import { restaurantCreationSchema } from '../../data/schema/restaurant.js'
 
-export async function createRestaurant() {
+export async function createRestaurant(requestBody) {
     it('Create restaurant', async function () {
-        const requestBody = await getCreateOrUpdateRestaurantRequestBody()
+
         await request(this, 'POST', '/restaurants', requestBody, true, 
             {
                 statusCode : 201,
-                expectedFields: ['user', 'meals', 'created', '_id'],
                 expectedValues: [
                                     { path: 'name', value: requestBody.name },
                                     { path: 'description', value: requestBody.description },
@@ -18,10 +18,7 @@ export async function createRestaurant() {
                                         { path: 'description', name: 'restaurantDescription' },
                                         { path: 'user', name: 'userId'},
                                     ],
-                expectedTypes: [
-                    {path: '_id', type: 'string'},
-                    {path: 'meals', type: 'array'}
-                ]
+                schema: restaurantCreationSchema
             }
         )
     })
@@ -103,7 +100,7 @@ export async function updateRestaurant() {
                                 ],
                 executionVariables: [
                                         {path: 'name', name: 'restaurantName'}, 
-                                        {path: 'description', name: 'restaurantDescription'}, 
+                                        {path: 'description', name: 'restaurantDescription'} 
                                     ]
             }
         )
@@ -116,10 +113,23 @@ export async function getRemovedRestaurant() {
             undefined, true, 
             {
                 expectedValues: [
-                    {path: 'message', value: 'Cannot find restaurant'}, 
+                    {path: 'message', value: 'Cannot find restaurant'} 
                 ],
                 statusCode : 404
                 
+            }
+        )
+    })
+}
+
+export async function negativeCreateRestaurant(requestBody, testCaseName, messageValue) {
+    it(testCaseName, async function () {
+        await request(this, 'POST', '/restaurants', requestBody, true, 
+            {
+                statusCode : 400,
+                expectedValues: [
+                                    { path: 'message', value: messageValue }
+                                ]
             }
         )
     })
