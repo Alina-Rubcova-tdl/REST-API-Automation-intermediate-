@@ -1,8 +1,5 @@
 export async function generateTestData() {
-    setEnvironment(process.argv.slice(process.argv.length - 1)[0])
-}
-
-function setEnvironment(env) {
+    const env = process.env.npm_config_env || 'STG'
     global.env = env
 }
 
